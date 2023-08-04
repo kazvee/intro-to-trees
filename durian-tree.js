@@ -32,6 +32,41 @@ class Employee {
   hasSameBoss(employee) {
     return this.boss === employee.boss;
   }
+
+  employeesThatMakeOver(amount) {
+
+    let employees = []; // 1
+
+    if (this.salary > amount) {
+      employees.push(this); // 2
+    }
+
+    for (const subordinate of this.subordinates) {
+      const subordinatesThatMakeOver = subordinate.employeesThatMakeOver(amount); // 3
+      employees = employees.concat(subordinatesThatMakeOver);
+    }
+
+    return employees;
+  }
+
+  get totalEmployees() {
+
+    // Count current employee
+    let totalEmployees = 1;
+
+    // Base case: Check if the current employee has no subordinates
+    if (!this.subordinates.length) {
+      return totalEmployees;
+    }
+
+    // Recursive case: Loop through each subordinate and add their total employees count
+    for (const subordinate of this.subordinates) {
+      totalEmployees += subordinate.totalEmployees;
+    }
+
+    return totalEmployees;
+  }
+
 }
 
 const ada = new Employee("Ada", "CEO", 3000000.00);
@@ -50,6 +85,14 @@ const brian = new Employee("Brian", "Spellchecker", 300000);
 
 const karla = new Employee("Karla", "Retail Manager", 600000);
 
+const sarah = new Employee("Sarah", "Dev Intern", 500000);
+const andrew = new Employee("Andrew", "Dev Intern", 500000);
+
+const emma = new Employee("Emma", "Marketing Intern", 400000);
+const jeremy = new Employee("Jeremy", "Marketing Intern", 400000);
+
+const chandler = new Employee("Chandler", "Retail Intern", 400000);
+
 ada.addSubordinate(craig);
 ada.addSubordinate(phil);
 ada.addSubordinate(angela);
@@ -64,8 +107,23 @@ phil.addSubordinate(brian);
 
 angela.addSubordinate(karla);
 
+ali.addSubordinate(sarah);
+ali.addSubordinate(andrew);
+
+david.addSubordinate(emma);
+david.addSubordinate(jeremy);
+
+karla.addSubordinate(chandler);
+
+let wealthyEmployees = ada.employeesThatMakeOver(418401);
 
 console.log(`Craig's boss is ➡️`, craig.boss);
 console.log(`Craig's boss is named: ${craig.boss.name}! 👩‍💼`);
 console.log(`Craig has ${craig.numberOfSubordinates} subordinates! 🫡`);
 console.log(`There are ${craig.numberOfPeopleToCEO} people between Craig and the CEO! 🤔`);
+
+console.log(`The wealthy employees are: 💰:`, wealthyEmployees);
+
+console.log(`There are a total of ${ada.totalEmployees} employees! 🏢`);
+
+console.log(`There are a total of ${craig.totalEmployees} employees working for Craig (including Craig himself)! 👨‍💼`);
